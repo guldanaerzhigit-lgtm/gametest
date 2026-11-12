@@ -1,33 +1,572 @@
-<!doctype html>
-<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Командная математическая игра</title>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#a8d8ff">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Математическая игра · Математикалық ойын</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:#172554;background:linear-gradient(135deg,#eff6ff,#f0fdf4);min-height:100vh}header{padding:18px 6%;background:#fff;border-bottom:1px solid #dbeafe;font-weight:900;font-size:21px}header span{color:#2563eb}main{max-width:1000px;margin:auto;padding:28px 18px}.screen{display:none}.screen.active{display:block}.hero{text-align:center;padding:18px 0 28px}.hero h1{font-size:clamp(30px,6vw,48px);margin:5px}.muted{color:#64748b;line-height:1.5}.panel{max-width:760px;margin:auto;background:white;border:1px solid #dbeafe;border-radius:22px;padding:clamp(20px,4vw,32px);box-shadow:0 12px 32px #1e3a8a12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.tile{background:white;border:1px solid #dbeafe;border-radius:20px;padding:22px;text-align:left;cursor:pointer;min-height:185px;box-shadow:0 8px 24px #1e3a8a0b}.tile:hover{border-color:#60a5fa;transform:translateY(-3px)}.tile .icon{font-size:43px}.tile h2{margin:10px 0}.tile p{color:#64748b;line-height:1.45}.back{border:0;background:none;color:#2563eb;font-weight:bold;cursor:pointer;padding:7px 0 17px}.teams{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}.teambox{border:1px solid #dbeafe;border-radius:16px;padding:15px;background:#f8fbff}.teambox input,.answer input{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:11px;font-size:16px;margin-top:8px}.choices,.levels{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.choices button,.levels button{border:1px solid #dbeafe;background:#f8fbff;padding:15px;border-radius:13px;font-size:16px;text-align:left;font-weight:bold;color:#172554;cursor:pointer}.choices button:hover,.levels button:hover{border-color:#2563eb;background:#eff6ff}.levels{grid-template-columns:1fr}.levels small{display:block;color:#64748b;font-weight:normal;margin-top:5px}.primary{border:0;background:#2563eb;color:#fff;padding:14px 20px;border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer}.primary:disabled{opacity:.5}.full{width:100%;margin-top:14px}.scoreboard{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.scorecard{background:#f8fbff;border:2px solid #dbeafe;border-radius:16px;padding:14px;text-align:center}.scorecard.active{border-color:#2563eb;background:#eff6ff;box-shadow:0 0 0 3px #2563eb16}.scorecard h3{margin:0 0 8px;font-size:17px}.points{font-size:34px;font-weight:900}.turn{text-align:center;background:#dbeafe;color:#1d4ed8;padding:11px;border-radius:12px;font-weight:bold}.arena{background:#eff6ff;border-radius:18px;padding:18px;text-align:center;margin:16px 0}.question{font-size:clamp(36px,8vw,54px);font-weight:900;margin:12px}.answer{display:flex;gap:10px;margin:12px auto}.team-arena{border:2px solid #dbeafe;border-radius:18px;padding:16px;background:#f8fbff}.team-arena h3{margin:0 0 8px}.team-arena .question{font-size:clamp(27px,5vw,42px)}.team-arenas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}.team-arena.done{border-color:#22c55e;background:#f0fdf4}.team-arena .answer input{width:100%}.answer input{margin:0;min-width:0;flex:1;text-align:center;font-size:23px}.feedback{text-align:center;min-height:28px;font-weight:bold;margin:12px}.progress{height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden}.progress div{height:100%;width:0;background:#22c55e}.result{text-align:center}.result .cup{font-size:70px}footer{text-align:center;color:#94a3b8;padding:22px}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.tile{min-height:unset}.teams,.team-arenas{grid-template-columns:1fr}.choices{grid-template-columns:1fr}.answer{flex-direction:column}.scorecard h3{font-size:14px}}
-</style></head><body><header>🧠 <span>Математика әлемі</span> · Командалық сайыс</header><main>
-<section id="home" class="screen active"><div class="hero"><h1>🏆 Математикалық командалық ойын</h1><p class="muted">Екі команда бақ сынайды. Кезекпен есеп шығарып, ұпай жинаңдар!</p></div><div class="panel"><h2>Командаларды таныстырайық</h2><p class="muted">Әр командада 4 оқушы. Команда атауларын енгізіңдер.</p><div class="teams"><div class="teambox">🔵 <b>1-команда</b><input id="team1" value="Алғырлар" maxlength="24"></div><div class="teambox">🟢 <b>2-команда</b><input id="team2" value="Білімділер" maxlength="24"></div></div><button class="primary full" onclick="toGames()">Сайысты бастау →</button></div></section>
-<section id="games" class="screen"><div class="panel"><button class="back" onclick="show('home')">← Артқа</button><h2>Ойын түрін таңдаңдар</h2><div class="grid">
-<button class="tile" onclick="pickGame('rope')"><div class="icon">🪢</div><h2>Арқан тарту</h2><p>Дұрыс жауап берген команда арқанды өзіне тартады.</p></button>
-<button class="tile" onclick="pickGame('climb')"><div class="icon">🧗</div><h2>Биікке өрлеу</h2><p>Әр дұрыс жауап командаға бір қадам береді.</p></button>
-<button class="tile" onclick="pickGame('race')"><div class="icon">🏃</div><h2>Жүйрік топ</h2><p>Ұпай жинап, мәреге бірінші жетіңдер.</p></button></div></div></section>
-<section id="setup" class="screen"><div class="panel"><button class="back" onclick="show('games')">← Артқа</button><h2>Есеп түрін таңдаңдар</h2><div class="choices"><button onclick="pickOp('+')">➕ Қосу</button><button onclick="pickOp('-')">➖ Азайту</button><button onclick="pickOp('×')">✖️ Көбейту</button><button onclick="pickOp('÷')">➗ Бөлу</button></div><h2 style="margin-top:24px">Қиындық деңгейі</h2><div class="levels"><button onclick="begin(1)">⭐ Жеңіл <small>Бір таңбалы сандар</small></button><button onclick="begin(2)">⭐⭐ Орташа <small>Екі таңбалы сандар</small></button><button onclick="begin(3)">⭐⭐⭐ Күрделі <small>Күрделі есептер</small></button></div><p class="muted">Әр командаға 7 сұрақтан беріледі. Барлығы 14 кезек.</p></div></section>
-<section id="play" class="screen"><div class="panel"><button class="back" onclick="if(confirm('Сайыстан шығасыңдар ма?'))show('home')">← Сайыстан шығу</button><div class="progress"><div id="bar"></div></div><div class="scoreboard"><div class="scorecard active" id="card0"><h3 id="name0">Алғырлар</h3><div class="points" id="score0">0</div><small>ұпай</small></div><div class="scorecard" id="card1"><h3 id="name1">Білімділер</h3><div class="points" id="score1">0</div><small>ұпай</small></div></div><div class="turn" id="turn">Екі команда бір уақытта ойнайды!</div><div class="muted" id="round" style="text-align:center;margin:10px">1 / 7 кезең</div><div class="team-arenas"><div class="team-arena" id="arena0"><h3>🔵 <span id="arenaName0">Алғырлар</span></h3><div class="muted" id="count0">1 / 7 сұрақ</div><div class="muted" id="timer0">⏱ 15 сек</div><div class="question" id="question0">5 + 3 = ?</div><div class="feedback" id="feedback0"></div></div><div class="team-arena" id="arena1"><h3>🟢 <span id="arenaName1">Білімділер</span></h3><div class="muted" id="count1">1 / 7 сұрақ</div><div class="muted" id="timer1">⏱ 15 сек</div><div class="question" id="question1">8 − 3 = ?</div><div class="feedback" id="feedback1"></div></div></div><div class="arena"><b id="inputTeam">Ортақ жауап өрісі — жауабыңызды енгізіңіз</b><div class="answer"><input id="sharedAnswer" type="number" inputmode="numeric" placeholder="Жауапты енгізіңіз"><button class="primary" id="submitShared" onclick="checkShared()">Тексеру</button></div><div class="muted">Жауап екі команданың да сұрақтарымен автоматты салыстырылады. Қай сұрақтың жауабы сәйкес келсе, сол команда ұпай алады және келесі сұрағы ашылады.</div></div></div></section>
-<section id="result" class="screen"><div class="panel result"><div class="cup">🏆</div><h2 id="winner">Жеңімпаз!</h2><p id="finalText" class="muted"></p><button class="primary full" onclick="show('home')">Жаңа сайыс бастау</button></div></section>
-</main><footer>Командалық сайыс · Білім — күш!</footer>
-<script>let names=['Алғырлар','Білімділер'],scores=[0,0],game='rope',op='+',level=1,progress=[0,0],answers=[0,0],timeLeft=[15,15],timers=[null,null];
-const QUESTION_SECONDS=15;
-const gameNames={rope:'Арқан тарту',climb:'Биікке өрлеу',race:'Жүйрік топ'},icons={rope:'🪢',climb:'🧗',race:'🏃'};
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
-function toGames(){names=[document.getElementById('team1').value.trim()||'1-команда',document.getElementById('team2').value.trim()||'2-команда'];document.getElementById('name0').textContent=names[0];document.getElementById('name1').textContent=names[1];document.getElementById('arenaName0').textContent=names[0];document.getElementById('arenaName1').textContent=names[1];show('games')}
-function pickGame(g){game=g;show('setup')}
-function pickOp(o){op=o;document.querySelectorAll('.choices button').forEach(b=>b.style.outline='');event.currentTarget.style.outline='3px solid #2563eb'}
-function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function makeQuestion(){let a,b,ans;if(op==='+'){a=rnd(1,level===1?9:level===2?49:99);b=rnd(1,level===1?9:level===2?50:99);ans=a+b}else if(op==='-'){a=rnd(2,level===1?18:level===2?99:150);b=rnd(1,Math.min(a,level===1?9:level===2?50:99));ans=a-b}else if(op==='×'){a=rnd(1,level===1?9:level===2?12:25);b=rnd(1,level===1?9:level===2?12:25);ans=a*b}else{b=rnd(1,level===1?5:level===2?9:12);ans=rnd(1,level===1?10:level===2?15:20);a=b*ans}return {text:a+' '+op+' '+b+' = ?',answer:ans}}
-function stopTimer(i){if(timers[i])clearInterval(timers[i]);timers[i]=null}
-function startTimer(i){stopTimer(i);timeLeft[i]=QUESTION_SECONDS;document.getElementById('timer'+i).textContent='⏱ '+timeLeft[i]+' сек';timers[i]=setInterval(()=>{timeLeft[i]--;document.getElementById('timer'+i).textContent='⏱ '+timeLeft[i]+' сек';if(timeLeft[i]<=0){stopTimer(i);if(progress[i]<7){document.getElementById('feedback'+i).textContent='Уақыт аяқталды! Келесі сұрақ.';document.getElementById('feedback'+i).style.color='#d97706';progress[i]++;loadQuestion(i)}}},1000)}
-function begin(l){timers.forEach((_,i)=>stopTimer(i));level=l;scores=[0,0];progress=[0,0];document.getElementById('score0').textContent='0';document.getElementById('score1').textContent='0';document.getElementById('arenaName0').textContent=names[0];document.getElementById('arenaName1').textContent=names[1];document.getElementById('sharedAnswer').value='';document.getElementById('sharedAnswer').disabled=false;document.getElementById('submitShared').disabled=false;document.getElementById('inputTeam').textContent='Ортақ жауап өрісі — жауабыңызды енгізіңіз';document.getElementById('bar').style.width='0%';show('play');loadQuestion(0);loadQuestion(1)}
-function loadQuestion(i){stopTimer(i);if(progress[i]>=7){document.getElementById('question'+i).textContent='Барлық сұрақ аяқталды!';document.getElementById('count'+i).textContent='7 / 7 сұрақ';document.getElementById('timer'+i).textContent='Аяқталды';document.getElementById('arena'+i).classList.add('done');document.getElementById('feedback'+i).textContent='Сайыс аяқталды ✓';if(progress[0]>=7&&progress[1]>=7){document.getElementById('sharedAnswer').disabled=true;document.getElementById('submitShared').disabled=true;setTimeout(finish,700)}return}let q=makeQuestion();answers[i]=q.answer;document.getElementById('question'+i).textContent=q.text;document.getElementById('count'+i).textContent=(progress[i]+1)+' / 7 сұрақ';document.getElementById('feedback'+i).textContent='';document.getElementById('arena'+i).classList.remove('done');startTimer(i);updateProgress()}
-function updateProgress(){document.getElementById('bar').style.width=(Math.min(progress[0],progress[1])/7*100)+'%'}
-function checkShared(){let input=document.getElementById('sharedAnswer'),v=input.value;if(v===''){document.getElementById('inputTeam').textContent='Алдымен жауапты енгізіңіз!';return}let value=Number(v),matched=[];for(let i=0;i<2;i++){if(progress[i]<7&&value===answers[i])matched.push(i)}if(!matched.length){document.getElementById('inputTeam').textContent='Қате жауап! Қайта көріңіз. Сұрақ уақыты жүріп жатыр.';input.select();return}matched.forEach(i=>{scores[i]++;progress[i]++;document.getElementById('score'+i).textContent=scores[i];document.getElementById('feedback'+i).textContent='ДҰРЫС! +1 ұпай 🎉';document.getElementById('feedback'+i).style.color='#16a34a';loadQuestion(i)});document.getElementById('inputTeam').textContent='Дұрыс! Ұпай '+matched.map(i=>names[i]).join(' және ')+' командасына берілді.';input.value='';updateProgress()}
-function finish(){timers.forEach((_,i)=>stopTimer(i));show('result');let title;if(scores[0]>scores[1])title='🏆 Жеңімпаз: '+names[0]+'!';else if(scores[1]>scores[0])title='🏆 Жеңімпаз: '+names[1]+'!';else title='🤝 Тең нәтиже!';document.getElementById('winner').textContent=title;document.getElementById('finalText').textContent=names[0]+': '+scores[0]+' ұпай · '+names[1]+': '+scores[1]+' ұпай. Керемет сайыс болды!'}
-document.getElementById('sharedAnswer').addEventListener('keydown',e=>{if(e.key==='Enter')checkShared()});
-</script></body></html>
+:root{
+  --sky:#a8d8ff; --sky2:#e3f4ff; --ink:#12355b; --sun:#ffcf3f; --sun-d:#d9a400;
+  --blue:#2f7bff; --blue-d:#1c55c4; --red:#ff4d5e; --red-d:#c42c3c;
+  --grass:#7ccf5a; --grass-d:#4fa334; --wood:#b8793e; --wood-d:#8a5528;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{
+  font-family:"Nunito","Arial Rounded MT Bold",ui-rounded,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  color:var(--ink);background:linear-gradient(var(--sky),var(--sky2));
+  overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+#app{height:100dvh;position:relative}
+
+/* language switch */
+.lang{position:fixed;top:max(8px,env(safe-area-inset-top));right:10px;z-index:20;display:flex;background:#fff;border-radius:999px;padding:3px;box-shadow:0 2px 0 rgba(18,53,91,.25)}
+.lang button{background:none;padding:6px 12px;border-radius:999px;font-weight:800;font-size:14px}
+.lang button.on{background:var(--ink);color:#fff}
+
+/* screens */
+.screen{display:none;height:100%;flex-direction:column;align-items:center;justify-content:center;padding:64px 16px 20px;gap:14px;overflow-y:auto}
+.screen.active{display:flex}
+h1{margin:0;text-align:center;font-size:clamp(28px,8vw,46px);line-height:1.05;font-weight:900;letter-spacing:-.01em;text-shadow:3px 3px 0 var(--sun)}
+h2{margin:0;font-size:clamp(20px,5.5vw,28px);font-weight:900;text-align:center}
+.sub{margin:0;font-weight:700;opacity:.8;text-align:center}
+.foot{margin-top:auto;font-size:12px;opacity:.65;text-align:center;padding-top:8px}
+
+.opt{
+  width:min(420px,100%);display:flex;align-items:center;gap:14px;text-align:left;
+  background:#fff;border-radius:20px;padding:14px 18px;font-size:19px;font-weight:800;
+  box-shadow:0 6px 0 rgba(18,53,91,.28);transition:transform .08s,box-shadow .08s;
+}
+.opt:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(18,53,91,.28)}
+.opt .ic{font-size:34px;width:48px;text-align:center;flex:none}
+.opt.theme0{border-left:10px solid var(--blue)}
+.opt.theme1{border-left:10px solid var(--wood)}
+.opt.theme2{border-left:10px solid var(--grass-d)}
+.opt.lv{flex-direction:row}
+.opt.lv .stars{font-size:16px;min-width:64px;flex:none}
+.opt.lv .lvt{display:flex;flex-direction:column;gap:2px}
+.opt.lv small{font-size:14px;font-weight:700;opacity:.75}
+.opgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(420px,100%)}
+.opgrid .opt{flex-direction:column;justify-content:center;gap:4px;padding:18px 8px;text-align:center}
+.opgrid .opt .ic{font-size:40px}
+.back{background:none;font-weight:800;font-size:17px;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.7)}
+
+.seg{display:flex;background:rgba(255,255,255,.7);border-radius:999px;padding:4px;gap:4px}
+.seg button{background:none;border-radius:999px;padding:9px 16px;font-weight:800;font-size:15px}
+.seg button.on{background:var(--ink);color:#fff}
+
+/* game */
+#s-game{justify-content:flex-start;padding:0;gap:0;align-items:stretch}
+.gbar{display:flex;align-items:center;gap:8px;padding:max(8px,env(safe-area-inset-top)) 150px 6px 10px;min-height:48px}
+.gbar button{background:#fff;border-radius:999px;width:38px;height:38px;font-size:18px;font-weight:900;box-shadow:0 3px 0 rgba(18,53,91,.25)}
+.wins{background:#fff;border-radius:999px;padding:6px 12px;font-weight:900;font-size:14px;white-space:nowrap;box-shadow:0 3px 0 rgba(18,53,91,.25)}
+.wins b.b{color:var(--blue)} .wins b.r{color:var(--red)}
+.hint{flex:1;text-align:center;font-weight:800;font-size:13px;line-height:1.2}
+.stage{position:relative;flex:1;min-height:150px;margin:0 8px;border-radius:22px;overflow:hidden;background:linear-gradient(#cdeaff,#eaf7ff 70%);border:4px solid #fff}
+.stg{position:absolute;inset:0}
+.stg::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14%;background:var(--grass);border-top:4px solid var(--grass-d)}
+.bd{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;font-size:26px;border:3px solid #fff;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.bd.b{background:var(--blue)} .bd.r{background:var(--red)}
+
+/* tug */
+.tug .mark{position:absolute;top:0;bottom:0;width:0;border-left:3px dashed rgba(18,53,91,.3);z-index:1}
+.tug .m25{left:25%} .tug .m50{left:50%;border-left-style:solid;border-color:rgba(18,53,91,.5)} .tug .m75{left:75%}
+.tug .zb{position:absolute;left:0;top:0;bottom:0;width:25%;background:rgba(47,123,255,.15)}
+.tug .zr{position:absolute;right:0;top:0;bottom:0;width:25%;background:rgba(255,77,94,.15)}
+.pull{position:absolute;inset:0;transition:transform .45s cubic-bezier(.3,1.4,.5,1);z-index:2}
+.rope{position:absolute;left:30%;right:30%;top:58%;height:8px;border-radius:4px;background:repeating-linear-gradient(90deg,#c9954f 0 8px,#a8742f 8px 12px)}
+.knot{position:absolute;left:50%;top:58%;transform:translate(-50%,-90%);font-size:30px}
+.team{position:absolute;top:58%;margin-top:-26px;display:flex}
+.team .bd+.bd{margin-left:-12px}
+.team.blue{right:70%;transform:rotate(-8deg)} .team.red{left:70%;transform:rotate(8deg)}
+
+/* climb */
+.lane{position:absolute;top:0;bottom:0;width:50%}
+.lane.l0{left:0} .lane.l1{right:0}
+.pole{position:absolute;left:50%;transform:translateX(-50%);top:14%;bottom:6%;width:16px;border-radius:8px;background:repeating-linear-gradient(0deg,var(--wood) 0 14px,var(--wood-d) 14px 18px);z-index:1}
+.prize{position:absolute;left:50%;top:1%;transform:translateX(-50%);font-size:34px;z-index:2}
+.cl{position:absolute;left:50%;transform:translateX(-50%);bottom:8%;transition:bottom .4s ease;z-index:3}
+
+/* race */
+.rl{position:absolute;left:8px;right:8px;height:36%;border-radius:14px;z-index:1}
+.rl0{top:8%;background:rgba(47,123,255,.16);border:3px dashed rgba(47,123,255,.4)}
+.rl1{top:50%;background:rgba(255,77,94,.16);border:3px dashed rgba(255,77,94,.4)}
+.fin{position:absolute;right:10px;top:0;bottom:0;width:16px;background:repeating-linear-gradient(0deg,#111 0 8px,#fff 8px 16px)}
+.rn{position:absolute;top:50%;margin-top:-22px;left:3%;transition:left .4s ease;z-index:3}
+.rn.hop .bd{animation:hop .4s ease}
+@keyframes hop{0%{transform:translateY(0)}40%{transform:translateY(-16px)}100%{transform:translateY(0)}}
+
+/* panels */
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 8px max(8px,env(safe-area-inset-bottom))}
+.panel{border-radius:18px;padding:6px;display:flex;flex-direction:column;gap:5px;transition:transform .1s}
+.panel.p0{background:var(--blue)} .panel.p1{background:var(--red)}
+.panel.ok{animation:okf .35s} .panel.bad{animation:shake .35s}
+@keyframes okf{50%{filter:brightness(1.35)}}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.ph{display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:900;font-size:13px;padding:0 4px;gap:4px}
+.pq{background:#fff;border-radius:12px;text-align:center;font-weight:900;font-size:clamp(18px,5.6vw,28px);padding:5px 2px;white-space:nowrap}
+.pa{background:#fff;border-radius:12px;text-align:center;font-weight:900;font-size:clamp(20px,6vw,30px);height:clamp(34px,5.4dvh,46px);line-height:clamp(34px,5.4dvh,46px);border:3px solid rgba(0,0,0,.12);overflow:hidden}
+.pa:empty::before{content:"…";opacity:.3}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.kp button{height:clamp(34px,5.6dvh,52px);border-radius:10px;background:#fff;font-weight:900;font-size:clamp(18px,5vw,24px);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.kp button:active{transform:translateY(3px);box-shadow:0 0 0 rgba(0,0,0,.25)}
+.kp .clr{background:#ffe1e4}
+.kp .go{grid-column:span 2;background:var(--sun);box-shadow:0 3px 0 var(--sun-d)}
+.panel.off .kp button{opacity:.45;pointer-events:none}
+@media (min-width:900px) and (min-height:700px){
+  .panels{max-width:900px;margin:0 auto;width:100%;gap:16px}
+}
+
+/* overlay */
+#ov{position:fixed;inset:0;background:rgba(18,53,91,.6);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+#ov.on{display:flex}
+.ovc{background:#fff;border-radius:28px;padding:26px 22px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center;min-width:min(320px,100%);box-shadow:0 8px 0 rgba(0,0,0,.25);animation:pop .3s ease}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.ovc .big{font-size:clamp(24px,7vw,34px);font-weight:900}
+.count{font-size:96px;font-weight:900;line-height:1;color:var(--blue)}
+.count.go{color:var(--red);font-size:64px}
+.primary{background:var(--sun);border-radius:18px;padding:14px 26px;font-weight:900;font-size:20px;box-shadow:0 5px 0 var(--sun-d)}
+.primary:active{transform:translateY(3px);box-shadow:0 2px 0 var(--sun-d)}
+.secondary{background:#e8f1fb;border-radius:18px;padding:12px 22px;font-weight:800;font-size:17px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="lang" role="group" aria-label="Language">
+    <button id="lang-ru" data-lang="ru">RU</button>
+    <button id="lang-kk" data-lang="kk">ҚАЗ</button>
+  </div>
+
+  <!-- HOME -->
+  <section class="screen active" id="s-home">
+    <h1 data-i="title"></h1>
+    <p class="sub" data-i="pickTheme"></p>
+    <div id="themeList" style="display:flex;flex-direction:column;gap:14px;width:100%;align-items:center"></div>
+    <div class="seg" id="modeSeg">
+      <button data-mode="two"></button><button data-mode="bot"></button>
+    </div>
+    <div class="foot" data-i="footer"></div>
+  </section>
+
+  <!-- OPERATION -->
+  <section class="screen" id="s-op">
+    <h2 id="opTitle"></h2>
+    <p class="sub" data-i="pickOp"></p>
+    <div class="opgrid" id="opList"></div>
+    <button class="back" id="opBack" data-i="back"></button>
+  </section>
+
+  <!-- LEVEL -->
+  <section class="screen" id="s-level">
+    <h2 data-i="pickLevel"></h2>
+    <p class="sub" id="lvMode"></p>
+    <div id="lvList" style="display:flex;flex-direction:column;gap:14px;width:100%;align-items:center"></div>
+    <button class="back" id="lvBack" data-i="back"></button>
+  </section>
+
+  <!-- GAME -->
+  <section class="screen" id="s-game">
+    <div class="gbar">
+      <button id="gMenu" aria-label="Menu">✕</button>
+      <button id="gRestart" aria-label="Restart">↻</button>
+      <button id="gMute" aria-label="Sound">🔊</button>
+      <div class="wins" id="wins"></div>
+      <div class="hint" id="hint"></div>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div class="panels" id="panels"></div>
+  </section>
+
+  <div id="ov"><div class="ovc" id="ovc"></div></div>
+</div>
+
+<script>
+const I18N = {
+  ru: {
+    title:'Математическая игра', pickTheme:'Выберите игру',
+    tug:'Перетягивание каната', climb:'Лазание на столб', race:'Бег в мешках',
+    modeTwo:'2 игрока', modeBot:'Против компьютера',
+    pickOp:'Выберите действие', add:'Сложение', sub:'Вычитание', mul:'Умножение', div:'Деление',
+    pickLevel:'Выберите уровень сложности', modeLabel:'Режим',
+    lvNames:['Начинающий','Любитель','Профи'],
+    lv:{
+      add:['1 цифра + 1 цифра','1 цифра + 2 цифры (вперемешку)','2 цифры + 2 цифры'],
+      sub:['1 цифра − 1 цифра','2 цифры − 1 цифра (вперемешку)','2 цифры − 2 цифры'],
+      mul:['1 цифра × 1 цифра','1 цифра × 2 цифры','2 цифры × 2 цифры'],
+      div:['Целые (1–20 ÷ 1–5)','Целые (10–99 ÷ 1–9)','Целые / десятичные (10–99 ÷ 2–10)']
+    },
+    back:'← Назад',
+    hintTug:'Решайте примеры, чтобы тянуть канат!',
+    hintClimb:'Решайте примеры, чтобы лезть вверх! (7 верных ответов для победы)',
+    hintRace:'Решайте примеры, чтобы прыгать вперёд! (10 прыжков до победы)',
+    correct:'Верно', position:'Позиция', player1:'Игрок 1', player2:'Игрок 2', bot:'Компьютер',
+    won:'победил', again:'Играть снова', menu:'В меню', ready:'Приготовьтесь…', go:'Вперёд!',
+    footer:'Версия на русском и казахском языках · по мотивам Permainan Matematika (AfifEdu)'
+  },
+  kk: {
+    title:'Математикалық ойын', pickTheme:'Ойынды таңдаңыз',
+    tug:'Арқан тарту', climb:'Бағанға өрмелеу', race:'Қапта жүгіру',
+    modeTwo:'2 ойыншы', modeBot:'Компьютерге қарсы',
+    pickOp:'Амал түрін таңдаңыз', add:'Қосу', sub:'Азайту', mul:'Көбейту', div:'Бөлу',
+    pickLevel:'Қиындық деңгейін таңдаңыз', modeLabel:'Режим',
+    lvNames:['Бастаушы','Әуесқой','Кәсіпқой'],
+    lv:{
+      add:['1 таңбалы + 1 таңбалы','1 таңбалы + 2 таңбалы (аралас)','2 таңбалы + 2 таңбалы'],
+      sub:['1 таңбалы − 1 таңбалы','2 таңбалы − 1 таңбалы (аралас)','2 таңбалы − 2 таңбалы'],
+      mul:['1 таңбалы × 1 таңбалы','1 таңбалы × 2 таңбалы','2 таңбалы × 2 таңбалы'],
+      div:['Бүтін сандар (1–20 ÷ 1–5)','Бүтін сандар (10–99 ÷ 1–9)','Бүтін / ондық бөлшек (10–99 ÷ 2–10)']
+    },
+    back:'← Артқа',
+    hintTug:'Арқанды тарту үшін есептерді шешіңіз!',
+    hintClimb:'Бағанға өрмелеу үшін есептерді шешіңіз! (жеңу үшін 7 дұрыс жауап)',
+    hintRace:'Алға секіру үшін есептерді шешіңіз! (жеңіске дейін 10 секіру)',
+    correct:'Дұрыс', position:'Орны', player1:'Ойыншы 1', player2:'Ойыншы 2', bot:'Компьютер',
+    won:'жеңді', again:'Қайта ойнау', menu:'Мәзір', ready:'Дайындалыңыз…', go:'Алға!',
+    footer:'Орыс және қазақ тілдеріндегі нұсқа · Permainan Matematika (AfifEdu) негізінде'
+  }
+};
+
+const $ = id => document.getElementById(id);
+const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const GOAL = {tug:5, climb:7, race:10};
+const THEMES = [['tug','🪢'],['climb','🎁'],['race','🦘']];
+const OPS = [['add','➕'],['sub','➖'],['mul','✖️'],['div','➗']];
+
+const state = {
+  lang: (navigator.language||'ru').toLowerCase().startsWith('kk') ? 'kk' : 'ru',
+  theme:null, op:null, level:0, mode:'two',
+  scores:[0,0], q:[null,null], input:['',''], locked:[false,false],
+  running:false, session:0, botTimer:null
+};
+const t = k => I18N[state.lang][k];
+state.wins = [0,0];
+state.muted = false;
+
+/* ---------- sound (WebAudio, no files) ---------- */
+let actx = null;
+function audio(){
+  if (!actx) { try { actx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} }
+  if (actx && actx.state==='suspended') actx.resume();
+  return actx;
+}
+function tone(freq, start, dur, type='sine', vol=.18){
+  const c = audio(); if (!c || state.muted) return;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.value = freq;
+  const t0 = c.currentTime + start;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol, t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t0); o.stop(t0+dur+0.05);
+}
+const SFX = {
+  ok:   () => { tone(660,0,.1); tone(880,.09,.16); },
+  bad:  () => { tone(200,0,.18,'sawtooth',.12); tone(150,.12,.22,'sawtooth',.12); },
+  tick: () => tone(520,0,.12,'square',.1),
+  go:   () => { tone(784,0,.25,'square',.12); },
+  win:  () => { [523,659,784,1047].forEach((f,i)=>tone(f,i*.13,.22,'triangle',.2)); tone(1047,.55,.5,'triangle',.2); }
+};
+function updateWins(){
+  $('wins').innerHTML = `🏆 <b class="b">${state.wins[0]}</b> : <b class="r">${state.wins[1]}</b>`;
+}
+
+/* ---------- screens ---------- */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+}
+
+function applyLang(){
+  document.documentElement.lang = state.lang;
+  document.querySelectorAll('[data-i]').forEach(el => el.textContent = t(el.dataset.i));
+  $('lang-ru').classList.toggle('on', state.lang==='ru');
+  $('lang-kk').classList.toggle('on', state.lang==='kk');
+  document.title = t('title');
+  renderHome(); renderOps(); renderLevels();
+  if ($('s-game').classList.contains('active')) { $('hint').textContent = hintText(); updateAll(); }
+}
+
+function renderHome(){
+  const box = $('themeList'); box.innerHTML = '';
+  THEMES.forEach(([k,ic],i) => {
+    const b = document.createElement('button');
+    b.className = 'opt theme'+i;
+    b.innerHTML = `<span class="ic">${ic}</span><span>${t(k)}</span>`;
+    b.onclick = () => { state.theme = k; $('opTitle').textContent = t(k); show('s-op'); };
+    box.appendChild(b);
+  });
+  const seg = $('modeSeg').children;
+  seg[0].textContent = t('modeTwo'); seg[1].textContent = t('modeBot');
+  [...seg].forEach(b => b.classList.toggle('on', b.dataset.mode === state.mode));
+}
+
+function renderOps(){
+  if (state.theme) $('opTitle').textContent = t(state.theme);
+  const box = $('opList'); box.innerHTML = '';
+  OPS.forEach(([k,ic]) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = `<span class="ic">${ic}</span><span>${t(k)}</span>`;
+    b.onclick = () => { state.op = k; renderLevels(); show('s-level'); };
+    box.appendChild(b);
+  });
+}
+
+function renderLevels(){
+  if (!state.op) return;
+  $('lvMode').textContent = `${t('modeLabel')}: ${t(state.op)}`;
+  const box = $('lvList'); box.innerHTML = '';
+  [0,1,2].forEach(i => {
+    const b = document.createElement('button');
+    b.className = 'opt lv';
+    b.innerHTML = `<span class="stars">${'⭐'.repeat(i+1)}</span><span class="lvt"><b>${t('lvNames')[i]}</b><small>${t('lv')[state.op][i]}</small></span>`;
+    b.onclick = () => { state.level = i; enterGame(); };
+    box.appendChild(b);
+  });
+}
+
+/* ---------- questions ---------- */
+function makeQ(){
+  const lv = state.level; let a,b,ans,sym;
+  switch(state.op){
+    case 'add': sym='+';
+      if (lv===0){a=rnd(1,9);b=rnd(1,9);}
+      else if (lv===1){a=rnd(1,9);b=rnd(10,99); if(Math.random()<.5)[a,b]=[b,a];}
+      else {a=rnd(10,99);b=rnd(10,99);}
+      ans=a+b; break;
+    case 'sub': sym='−';
+      if (lv===0){a=rnd(1,9);b=rnd(1,a);}
+      else if (lv===1){a=rnd(10,99);b=rnd(1,9);}
+      else {a=rnd(10,99);b=rnd(10,a);}
+      ans=a-b; break;
+    case 'mul': sym='×';
+      if (lv===0){a=rnd(2,9);b=rnd(2,9);}
+      else if (lv===1){a=rnd(2,9);b=rnd(10,99); if(Math.random()<.5)[a,b]=[b,a];}
+      else {a=rnd(10,40);b=rnd(10,40);}
+      ans=a*b; break;
+    case 'div': sym='÷';
+      if (lv===0){b=rnd(1,5);const q=rnd(1,Math.floor(20/b));a=b*q;ans=q;}
+      else if (lv===1 || Math.random()<.4){
+        b = lv===1 ? rnd(2,9) : rnd(2,10);
+        const q=rnd(Math.ceil(10/b),Math.floor(99/b)); a=b*q; ans=q;
+      } else {
+        b=[2,4,5][rnd(0,2)];
+        do { a=rnd(10,99); } while (a % b === 0);
+        ans=Math.round(a/b*100)/100;
+      }
+      break;
+  }
+  return {text:`${a} ${sym} ${b} = ?`, ans};
+}
+
+function isCorrect(p){
+  const s = state.input[p].replace(',','.');
+  if (s===''||s==='-'||s==='-.'||s==='.') return false;
+  const v = parseFloat(s);
+  return !isNaN(v) && Math.abs(v - state.q[p].ans) < 0.005;
+}
+
+/* ---------- game ---------- */
+function hintText(){ return t({tug:'hintTug',climb:'hintClimb',race:'hintRace'}[state.theme]); }
+function pname(p){ return p===0 ? t('player1') : (state.mode==='bot' ? '🤖 '+t('bot') : t('player2')); }
+
+function buildPanels(){
+  const box = $('panels'); box.innerHTML = '';
+  for (let p=0;p<2;p++){
+    const d = document.createElement('div');
+    d.className = 'panel p'+p; d.id = 'panel'+p;
+    d.innerHTML = `<div class="ph"><span class="pname"></span><span class="pscore"></span></div><div class="pq"></div><div class="pa"></div><div class="kp"></div>`;
+    const kp = d.querySelector('.kp');
+    ['1','2','3','4','5','6','7','8','9','−','0',',','C','OK'].forEach(k => {
+      const b = document.createElement('button');
+      b.textContent = k; b.dataset.k = k;
+      if (k==='C') b.className='clr';
+      if (k==='OK') b.className='go';
+      b.addEventListener('pointerdown', e => { e.preventDefault(); press(p,k); });
+      kp.appendChild(b);
+    });
+    box.appendChild(d);
+  }
+}
+
+function buildStage(){
+  const st = $('stage');
+  if (state.theme==='tug'){
+    st.innerHTML = `<div class="stg tug">
+      <div class="zb"></div><div class="zr"></div>
+      <div class="mark m25"></div><div class="mark m50"></div><div class="mark m75"></div>
+      <div class="pull" id="pull">
+        <div class="rope"></div><div class="knot">🚩</div>
+        <div class="team blue"><span class="bd b">😤</span><span class="bd b">😤</span></div>
+        <div class="team red"><span class="bd r">😤</span><span class="bd r">😤</span></div>
+      </div></div>`;
+  } else if (state.theme==='climb'){
+    st.innerHTML = `<div class="stg climb">` + [0,1].map(i =>
+      `<div class="lane l${i}"><div class="prize">🎁</div><div class="pole"></div><div class="cl" id="cl${i}"><span class="bd ${i?'r':'b'}">🧗</span></div></div>`
+    ).join('') + `</div>`;
+  } else {
+    st.innerHTML = `<div class="stg race">` + [0,1].map(i =>
+      `<div class="rl rl${i}"><div class="fin"></div><div class="rn" id="rn${i}"><span class="bd ${i?'r':'b'}">🦘</span></div></div>`
+    ).join('') + `</div>`;
+  }
+}
+
+function updateStage(){
+  const [a,b] = state.scores;
+  if (state.theme==='tug'){
+    const d = Math.max(-GOAL.tug, Math.min(GOAL.tug, a-b));
+    $('pull').style.transform = `translateX(${-d*4}%)`;
+  } else if (state.theme==='climb'){
+    [a,b].forEach((s,i) => { $('cl'+i).style.bottom = (8 + Math.min(s,GOAL.climb)/GOAL.climb*66) + '%'; });
+  } else {
+    [a,b].forEach((s,i) => { $('rn'+i).style.left = (3 + Math.min(s,GOAL.race)/GOAL.race*76) + '%'; });
+  }
+}
+
+function updateAll(){
+  for (let p=0;p<2;p++){
+    const el = $('panel'+p); if (!el) continue;
+    el.querySelector('.pname').textContent = pname(p);
+    const s = state.scores[p];
+    el.querySelector('.pscore').textContent =
+      state.theme==='tug'   ? `${t('correct')}: ${s}` :
+      state.theme==='climb' ? `${t('correct')}: ${s}/${GOAL.climb}` :
+                              `${t('position')}: ${s}/${GOAL.race}`;
+    el.querySelector('.pq').textContent = state.q[p] ? state.q[p].text : '';
+    el.querySelector('.pa').textContent = state.input[p].replace('-','−');
+    el.classList.toggle('off', !state.running || state.locked[p] || (state.mode==='bot' && p===1));
+  }
+  updateStage();
+}
+
+function flash(p,cls){
+  const el = $('panel'+p); el.classList.remove('ok','bad'); void el.offsetWidth; el.classList.add(cls);
+}
+function hop(p){
+  if (state.theme!=='race') return;
+  const r = $('rn'+p); r.classList.remove('hop'); void r.offsetWidth; r.classList.add('hop');
+}
+
+function press(p,k){
+  if (!state.running || state.locked[p] || (state.mode==='bot' && p===1)) return;
+  let s = state.input[p];
+  if (k==='C') s = '';
+  else if (k==='−') s = s.startsWith('-') ? s.slice(1) : '-'+s;
+  else if (k===',') { if (!s.includes(',')) s += (s===''||s==='-') ? '0,' : ','; }
+  else if (k==='OK') {
+    if (s===''||s==='-') return;
+    if (isCorrect(p)) correct(p); else wrong(p);
+    return;
+  } else if (s.replace(/[-,]/g,'').length < 6) {
+    s = (s==='0') ? k : s + k;
+  }
+  state.input[p] = s; updateAll();
+}
+
+function correct(p){
+  state.scores[p]++; state.input[p] = ''; state.q[p] = makeQ();
+  flash(p,'ok'); hop(p); SFX.ok();
+  const g = GOAL[state.theme]; let w = -1;
+  if (state.theme==='tug'){
+    const d = state.scores[0]-state.scores[1];
+    if (d>=g) w=0; else if (d<=-g) w=1;
+  } else if (state.scores[p]>=g) w=p;
+  updateAll();
+  if (w>=0) finish(w);
+}
+
+function wrong(p){
+  state.input[p] = ''; state.locked[p] = true; flash(p,'bad'); SFX.bad(); updateAll();
+  const sid = state.session;
+  setTimeout(() => { if (sid!==state.session) return; state.locked[p] = false; updateAll(); }, 900);
+}
+
+function scheduleBot(sid){
+  const lv = state.level;
+  const delay = [5000,7500,10000][lv] * (0.7 + Math.random()*0.6);
+  state.botTimer = setTimeout(() => {
+    if (sid!==state.session || !state.running) return;
+    if (Math.random() < [.9,.8,.7][lv]) correct(1); else wrong(1);
+    if (state.running) scheduleBot(sid);
+  }, delay);
+}
+
+async function finish(w){
+  state.running = false; clearTimeout(state.botTimer); updateAll();
+  const sid = state.session;
+  await sleep(600); if (sid!==state.session) return;
+  state.wins[w]++; updateWins(); SFX.win();
+  setOv(`<div class="big">🎉 ${pname(w).replace('🤖 ','')} ${t('won')}! 🎉</div>
+    <div class="big" style="font-size:20px">🏆 <span style="color:var(--blue)">${state.wins[0]}</span> : <span style="color:var(--red)">${state.wins[1]}</span></div>
+    <button class="primary" id="ovAgain">${t('again')}</button>
+    <button class="secondary" id="ovMenu">${t('menu')}</button>`);
+  $('ovAgain').onclick = startGame;
+  $('ovMenu').onclick = leaveGame;
+}
+
+function setOv(html){ $('ovc').innerHTML = html; $('ov').classList.add('on'); }
+function hideOv(){ $('ov').classList.remove('on'); }
+
+function enterGame(){
+  audio();
+  state.wins = [0,0]; updateWins();
+  show('s-game'); buildPanels(); $('hint').textContent = hintText(); startGame();
+}
+
+async function startGame(){
+  clearTimeout(state.botTimer);
+  const sid = ++state.session;
+  state.running = false;
+  state.scores = [0,0]; state.input = ['','']; state.locked = [false,false];
+  state.q = [makeQ(), makeQ()];
+  buildStage(); updateAll();
+  setOv(`<div class="big">${t('ready')}</div>`);
+  await sleep(900); if (sid!==state.session) return;
+  for (const n of [3,2,1]){
+    setOv(`<div class="count">${n}</div>`); SFX.tick();
+    await sleep(750); if (sid!==state.session) return;
+  }
+  setOv(`<div class="count go">${t('go')}</div>`); SFX.go();
+  await sleep(500); if (sid!==state.session) return;
+  hideOv(); state.running = true; updateAll();
+  if (state.mode==='bot') scheduleBot(sid);
+}
+
+function leaveGame(){
+  state.session++; state.running = false; clearTimeout(state.botTimer);
+  hideOv(); show('s-level');
+}
+
+/* ---------- wiring ---------- */
+$('lang-ru').onclick = () => { state.lang='ru'; applyLang(); };
+$('lang-kk').onclick = () => { state.lang='kk'; applyLang(); };
+$('modeSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  state.mode = b.dataset.mode; renderHome();
+});
+$('opBack').onclick = () => show('s-home');
+$('lvBack').onclick = () => show('s-op');
+$('gMenu').onclick = leaveGame;
+$('gRestart').onclick = startGame;
+$('gMute').onclick = () => { state.muted = !state.muted; $('gMute').textContent = state.muted ? '🔇' : '🔊'; if (!state.muted) SFX.tick(); };
+
+// keyboard for player 1 in computer mode
+document.addEventListener('keydown', e => {
+  if (!$('s-game').classList.contains('active') || state.mode!=='bot') return;
+  if (/^[0-9]$/.test(e.key)) press(0,e.key);
+  else if (e.key===','||e.key==='.') press(0,',');
+  else if (e.key==='-') press(0,'−');
+  else if (e.key==='Enter') press(0,'OK');
+  else if (e.key==='Backspace'||e.key==='Escape') press(0,'C');
+});
+
+applyLang();
+</script>
+</body>
+</html>
